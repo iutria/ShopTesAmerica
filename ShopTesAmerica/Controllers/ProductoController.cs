@@ -32,33 +32,35 @@ namespace ShopTesAmerica.Controllers
 
         // POST: Producto/Create
         [HttpPost]
-        public ActionResult Create(FormCollection collection)
+        public ActionResult Create(Producto collection)
         {
             try
             {
-                // TODO: Add insert logic here
-
-                return RedirectToAction("Index");
+                repository.Agregar(collection);
+                var resp = new { error = false };
+                return Json(resp, JsonRequestBehavior.AllowGet);
             }
-            catch
+            catch (Exception e)
             {
-                return View();
+                var resp = new { error = true };
+                return Json(resp, JsonRequestBehavior.AllowGet);
             }
         }
 
         // POST: Producto/Edit/5
         [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
+        public ActionResult Edit(Producto collection)
         {
             try
             {
-                // TODO: Add update logic here
-
-                return RedirectToAction("Index");
+                repository.Editar(collection);
+                var resp = new { error = false };
+                return Json(resp, JsonRequestBehavior.AllowGet);
             }
-            catch
+            catch (Exception e)
             {
-                return View();
+                var resp = new { error = true };
+                return Json(resp, JsonRequestBehavior.AllowGet);
             }
         }
     }

@@ -42,7 +42,7 @@
 </div>
 
 
-<div class="modal fade" id="Modal_Agregar_Vendedor" data-bs-backdrop="static" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="Modal_Agregar_Producto" data-bs-backdrop="static" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -52,20 +52,20 @@
             <div class="modal-body">
                 <form id="formVendedor">
                     <div class="mb-3">
-                        <label for="documento" class="form-label">Codigo</label>
-                        <input type="number" class="form-control" id="CodVend" name="CodVend">
+                        <label for="CodProd" class="form-label">Codigo</label>
+                        <input type="text" class="form-control" id="CodProd" name="CodProd">
                     </div>
                     <div class="mb-3">
                         <label for="nombre" class="form-label">Nombre</label>
                         <input type="text" class="form-control" id="Nombre" name="Nombre">
                     </div>
                     <div class="mb-3">
-                        <label for="nombre" class="form-label">Precio</label>
-                        <input type="text" class="form-control" id="Nombre" name="Nombre">
+                        <label for="Precio" class="form-label">Precio</label>
+                        <input type="number" class="form-control" id="Precio" name="Nombre">
                     </div>
                     <div class="mb-3">
-                        <label for="nombre" class="form-label">Familia</label>
-                        <select class="form-select">
+                        <label for="Familia" class="form-label">Familia</label>
+                        <select class="form-select" id="Familia">
                             <option value="Hardware">Hardware</option>
                             <option value="Software">Software</option>
                             <option value="Servicios">Servicios</option>
@@ -88,22 +88,23 @@
 
 <script>
     const mostrarModalAgregar = () => {
-        $('#CodVend').val("");
+        $('#CodProd').val("");
         $('#Nombre').val("");
-        $('#Estado').prop("checked", true);
-        $('#CodVend').prop("readonly", false);
+        $('#Precio').val("");
+        $('#CodProd').prop("readonly", false);
         $('#btn-accion').text('Agregar');
-        $('#Modal_Agregar_Vendedor').modal('show');
+        $('#Modal_Agregar_Producto').modal('show');
     }
 
-    const mostrarModalEditar = (codVend, nombre, estado) => {
-        console.log('editar', codVend, nombre, estado);
-        $('#CodVend').val(codVend.trim());
-        $('#CodVend').prop("readonly", true);
-        $('#Nombre').val(nombre);
-        $('#Estado').prop("checked", estado.trim() == 'activo');
+    const mostrarModalEditar = (CodProd,Nombre, Precio,Familia) => {
+        $('#CodProd').val(CodProd.trim());
+        $('#CodProd').prop("readonly", true);
+        $('#Nombre').val(Nombre);
+        $('#Precio').val(Precio);
+        $('#Familia').val(Familia)
+
         $('#btn-accion').text('Editar');
-        $('#Modal_Agregar_Vendedor').modal('show');
+        $('#Modal_Agregar_Producto').modal('show');
     }
 
     $('#formVendedor').submit(function (event) {
@@ -112,19 +113,26 @@
 
         const accion = $('#btn-accion').text();
 
-        const url = accion == 'Agregar' ? '/Vendedor/Create' : '/Vendedor/Edit';
+        const url = accion == 'Agregar' ? '/Producto/Create' : '/Producto/Edit';
+
+        const datos = {
+            CodProd: $('#CodProd').val().trim(),
+            Nombre: $('#Nombre').val().trim(),
+            Precio: $('#Precio').val().trim(),
+            Familia: $('#Familia').val()
+        }
 
         $.ajax({
             url: url,
             type: 'POST',
-            data: form.serialize(),
+            data: datos,
             success: function (data) {
                 if (data.error) {
                     mostrarToast('Ha ocurrido un error', 'danger');
                     return;
                 }
                 obtenerVendedores();
-                $('#Modal_Agregar_Vendedor').modal('hide');
+                $('#Modal_Agregar_Producto').modal('hide');
                 mostrarToast(`${accion == 'Agregar'?'Agregado':'Editado'} correctamente`, 'success');
             },
             error: function (error) {
@@ -156,7 +164,7 @@
                         <td>${item.Familia}</td>
                         <td>${item.Precio}</td>
                         <td>
-                            <button onclick="mostrarModalEditar('${item.CodVend}', '${item.Nombre}', '${item.Estado}')" class="btn btn-primary"><i class="bi bi-pencil-square"></i></button>
+                            <button onclick="mostrarModalEditar('${item.CodProd}','${item.Nombre}', '${item.Precio}','${item.Familia}')" class="btn btn-primary"><i class="bi bi-pencil-square"></i></button>
                         </td>
                     </tr>
                 `);
