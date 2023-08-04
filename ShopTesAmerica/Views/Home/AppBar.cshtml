@@ -1,0 +1,77 @@
+﻿<style>
+    .cont-nav {
+        height: 100vh !important;
+        padding-left: 10px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        width: 80px;
+    }
+
+    .nav {
+        height: 100%;
+        width: 60px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        border-radius: 5px;
+        background: black;
+        position: relative;
+    }
+
+    .btn-nav {
+        color: white;
+        text-decoration: none;
+        padding: 10px;
+    }
+
+        .btn-nav:hover {
+            background: white;
+            border-radius: 5px;
+            color: black;
+        }
+
+    .logo {
+        position: absolute;
+        top: 20px;
+        text-decoration: none;
+        color: white;
+        font-size: 30px;
+        display: flex;
+        flex-direction: column;
+    }
+
+        .logo span {
+            font-size: 12px;
+        }
+
+        .logo:hover {
+            color: yellow;
+        }
+</style>
+
+
+<div class="cont-nav">
+    <nav class="nav">
+        <a href="@Url.Action("Index", "Home", new { area = "" })" class="logo">
+            <i class="bi bi-cart4"></i>
+            <span>Tienda</span>
+        </a>
+        <a href="@Url.Action("Index", "Home", new { area = "" })" class="btn-nav">
+            <i class="bi bi-house"></i>
+        </a>
+        <a href="@Url.Action("Index", "Vendedor", new { area = "" })" class="btn-nav">
+            <i class="bi bi-person-vcard-fill"></i>
+        </a>
+        <a href="@Url.Action("Index", "Producto", new { area = "" })" class="btn-nav">
+            <i class="bi bi-bag"></i>
+        </a>
+        <a href="@Url.Action("Index", "Home", new { area = "" })" class="btn-nav">
+            <i class="bi bi-folder-plus"></i>
+        </a>
+        <a href="@Url.Action("Index", "Home", new { area = "" })" class="btn-nav">
+            <i class="bi bi-geo-alt-fill"></i>
+        </a>
+
+    </nav>
+</div>

@@ -1,0 +1,13 @@
+﻿@{
+    ViewBag.Title = "Inicio";
+    ViewBag.Cache = "Inicio";
+}
+
+<div class="contenedor-nav">
+    @{Html.RenderAction("Appbar", "Home");}
+    <div class="d-flex justify-content-center align-items-center flex-column">
+        <img height="200" src="@Url.Content("~/assets/imagen.svg")" alt="Mi Imagen" />
+        <h1>Hola!</h1>
+        Bienvenido
+    </div>
+</div>
