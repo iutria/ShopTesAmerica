@@ -18,48 +18,88 @@ namespace ShopTesAmerica.Repository
 
         public bool Agregar(Vendedor vendedor)
         {
-            string _sql = string.Format(
-                "insert into VENDEDOR " +
-                "(CODVEND, NOMBRE, ESTADO) " +
-                "values ('{0}', '{1}', '{2}')",
-                vendedor.CodVend.Trim(),
-                vendedor.Nombre.Trim(),
-                vendedor.Estado=="on"?"activo":"inactivo"
-            );
-            var cmd = new SqlCommand(_sql, conn.Conexion);
+            string _sql = "INSERT INTO VENDEDOR (CODVEND, NOMBRE, ESTADO) VALUES (@CodVend, @Nombre, @Estado)";
+
+            using (var cmd = new SqlCommand(_sql, conn.Conexion))
+            {
+                cmd.Parameters.AddWithValue("@CodVend", vendedor.CodVend.Trim());
+                cmd.Parameters.AddWithValue("@Nombre", vendedor.Nombre.Trim());
+                cmd.Parameters.AddWithValue("@Estado", vendedor.Estado == "on" ? "activo" : "inactivo");
+
+                conn.AbrirConexion();
+                int filas = cmd.ExecuteNonQuery();
+                conn.CerrarConexion();
+
+                return filas == 1;
+            }
+        }
+        public void AgregarReemplazo(String cod_reemplazo, String cod_Vendedor)
+        {
+            
             conn.AbrirConexion();
-            int filas = cmd.ExecuteNonQuery();
+
+            string _actualizar_usuarios_asignados = "update CLIENTE set VENDEDOR = @cod_reemplazo where VENDEDOR = @cod_Vendedor;";
+
+            using (var cmd = new SqlCommand(_actualizar_usuarios_asignados, conn.Conexion))
+            {
+                cmd.Parameters.AddWithValue("@cod_reemplazo", cod_reemplazo.Trim());
+                cmd.Parameters.AddWithValue("@cod_Vendedor", cod_Vendedor.Trim());
+                int filasAfectadas1 = cmd.ExecuteNonQuery();
+            }
+
+            string _actualizar_estado_vendedor = "update VENDEDOR set ESTADO = 'inactivo' where CODVEND = @cod_Vendedor;";
+            using (var cmd = new SqlCommand(_actualizar_estado_vendedor, conn.Conexion))
+            {
+                cmd.Parameters.AddWithValue("@cod_Vendedor", cod_Vendedor.Trim());
+                int filasAfectadas2 = cmd.ExecuteNonQuery();
+            }
+
             conn.CerrarConexion();
-            return filas == 1;
+            
         }
         public bool Editar(Vendedor vendedor)
         {
-            string _sql = string.Format(
-                "update dbo.VENDEDOR SET NOMBRE = '{1}', ESTADO = '{2}' WHERE CODVEND = '{0}';",
-                vendedor.CodVend.Trim(),
-                vendedor.Nombre.Trim(),
-                vendedor.Estado == "on" ? "activo" : "inactivo"
-            );
-            var cmd = new SqlCommand(_sql, conn.Conexion);
-            conn.AbrirConexion();
-            int filas = cmd.ExecuteNonQuery();
-            conn.CerrarConexion();
-            return filas == 1;
+            string _sql = "UPDATE dbo.VENDEDOR SET NOMBRE = @Nombre, ESTADO = @Estado WHERE CODVEND = @CodVend;";
+
+            using (var cmd = new SqlCommand(_sql, conn.Conexion))
+            {
+                cmd.Parameters.AddWithValue("@Nombre", vendedor.Nombre.Trim());
+                cmd.Parameters.AddWithValue("@Estado", vendedor.Estado == "on" ? "activo" : "inactivo");
+                cmd.Parameters.AddWithValue("@CodVend", vendedor.CodVend.Trim());
+
+                conn.AbrirConexion();
+                int filas = cmd.ExecuteNonQuery();
+                conn.CerrarConexion();
+
+                return filas == 1;
+            }
         }
+
         public List<Vendedor> GetVendedores()
         {
-            string _sql = "select * from VENDEDOR";
-            System.Data.DataTable tabla = new DataTable("VENDEDOR");
-            SqlDataAdapter adapter = new SqlDataAdapter(_sql, conn.Conexion);
-
-            adapter.Fill(tabla);
-
             List<Vendedor> lista = new List<Vendedor>();
 
-            foreach (var fila in tabla.Rows)
+            string _sql = "SELECT * FROM VENDEDOR";
+
+            using (var cmd = new SqlCommand(_sql, conn.Conexion))
             {
-                lista.Add(new Vendedor((DataRow)fila));
+                conn.AbrirConexion();
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Vendedor vendedor = new Vendedor
+                        {
+                            CodVend = reader["CODVEND"].ToString(),
+                            Nombre = reader["NOMBRE"].ToString(),
+                            Estado = reader["ESTADO"].ToString()
+                        };
+                        lista.Add(vendedor);
+                    }
+                }
+                conn.CerrarConexion();
             }
+
             return lista;
         }
     }

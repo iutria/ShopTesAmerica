@@ -1,0 +1,17 @@
+﻿@{
+    ViewBag.Title = "Reporte";
+}
+
+<script>
+    $(document).ready(function () {
+        seleccionarIcono('icon-reporte');
+    });
+</script>
+
+<div class="contenedor-nav">
+    @{Html.RenderAction("Appbar", "Home");}
+    <div class="contenedor">
+        <button onclick="mostrarModalAgregar()" class="btn boton-flotante"><i class="bi bi-plus"></i></button>
+        <h1 style="text-align: start">@ViewBag.Title</h1>
+    </div>
+</div>

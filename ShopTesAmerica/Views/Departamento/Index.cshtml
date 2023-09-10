@@ -1,0 +1,36 @@
+﻿
+
+@{
+    ViewBag.Title = "Departamentos";
+}
+
+<script>
+    $(document).ready(function () {
+        seleccionarIcono('icon-lugar');
+    });
+</script>
+
+<div class="contenedor-nav">
+    @{Html.RenderAction("Appbar", "Home");}
+    <div class="contenedor" style="height: 100vh;">
+        <button onclick="mostrarModalAgregar()" class="btn boton-flotante"><i class="bi bi-plus"></i></button>
+        <h1 style="text-align: start">@ViewBag.Title</h1>
+        <hr />
+        <div class="row">
+            <div class="col">
+                <div class="card" style="height: 100%">
+
+                </div>
+            </div>
+            <div class="col">
+                <div class="card" style="height: 100%">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+</script>

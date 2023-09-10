@@ -5,6 +5,7 @@ using System.Data.SqlClient;
 using System.Data;
 using System.Linq;
 using System.Web;
+using System.Collections;
 
 namespace ShopTesAmerica.Repository
 {
@@ -18,50 +19,84 @@ namespace ShopTesAmerica.Repository
 
         public bool Agregar(Producto producto)
         {
-            string _sql = string.Format(
-                "insert into PRODUCTO " +
-                "(CODPROD, NOMBRE, FAMILIA, PRECIO) " +
-                "values ('{0}', '{1}', '{2}', {3})",
-                producto.CodProd.Trim(),
-                producto.Nombre.Trim(),
-                producto.Familia.Trim(),
-                producto.Precio
-            );
-            var cmd = new SqlCommand(_sql, conn.Conexion);
-            conn.AbrirConexion();
-            int filas = cmd.ExecuteNonQuery();
-            conn.CerrarConexion();
-            return filas == 1;
+            string query = "INSERT INTO PRODUCTO (CODPROD, NOMBRE, FAMILIA, PRECIO) " +
+                   "VALUES (@CodProd, @Nombre, @Familia, @Precio)";
+            using (SqlCommand command = new SqlCommand(query, conn.Conexion))
+            {
+                command.Parameters.AddWithValue("@CodProd", producto.CodProd.Trim());
+                command.Parameters.AddWithValue("@Nombre", producto.Nombre.Trim());
+                command.Parameters.AddWithValue("@Familia", producto.Familia.Trim());
+                command.Parameters.AddWithValue("@Precio", producto.Precio);
+
+                conn.AbrirConexion();
+                int filasAfectadas = command.ExecuteNonQuery();
+                conn.CerrarConexion();
+
+                return filasAfectadas == 1;
+            }
+        }
+        public bool IncrementarPrecios()
+        {
+            string _sql = "UPDATE producto "+
+                "SET precio = CASE " +
+                    "WHEN familia = 'Hardware' THEN precio * 1.10 " +
+                    "WHEN familia = 'Software' THEN precio * 1.08 " +
+                    "WHEN familia = 'Servicios' THEN precio * 1.06 " +
+                    "ELSE precio "+
+                "END";
+            using (SqlCommand command = new SqlCommand(_sql, conn.Conexion))
+            {
+                conn.AbrirConexion();
+                command.ExecuteNonQuery();
+                conn.CerrarConexion();
+
+                return true;
+            }
         }
         public bool Editar(Producto producto)
         {
-            string _sql = string.Format(
-                "update dbo.PRODUCTO SET NOMBRE = '{1}', FAMILIA = '{2}', PRECIO = {3} WHERE CODPROD = '{0}';",
-                producto.CodProd.Trim(),
-                producto.Nombre.Trim(),
-                producto.Familia.Trim(),
-                producto.Precio
-            );
-            var cmd = new SqlCommand(_sql, conn.Conexion);
-            conn.AbrirConexion();
-            int filas = cmd.ExecuteNonQuery();
-            conn.CerrarConexion();
-            return filas == 1;
+            string query = "UPDATE dbo.PRODUCTO SET NOMBRE = @Nombre, FAMILIA = @Familia, PRECIO = @Precio WHERE CODPROD = @CodProd;";
+
+            using (SqlCommand command = new SqlCommand(query, conn.Conexion))
+            {
+                command.Parameters.AddWithValue("@Nombre", producto.Nombre.Trim());
+                command.Parameters.AddWithValue("@Familia", producto.Familia.Trim());
+                command.Parameters.AddWithValue("@Precio", producto.Precio);
+                command.Parameters.AddWithValue("@CodProd", producto.CodProd.Trim());
+
+                conn.AbrirConexion();
+                int filasAfectadas = command.ExecuteNonQuery();
+                conn.CerrarConexion();
+
+                return filasAfectadas == 1;
+            }
         }
         public List<Producto> GetProductos()
         {
-            string _sql = "select * from PRODUCTO";
-            System.Data.DataTable tabla = new DataTable("PRODUCTO");
-            SqlDataAdapter adapter = new SqlDataAdapter(_sql, conn.Conexion);
-
-            adapter.Fill(tabla);
-
             List<Producto> lista = new List<Producto>();
 
-            foreach (var fila in tabla.Rows)
+            string query = "SELECT * FROM PRODUCTO";
+
+            using (SqlCommand command = new SqlCommand(query, conn.Conexion))
             {
-                lista.Add(new Producto((DataRow)fila));
-            }
+                conn.AbrirConexion();
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Producto producto = new Producto
+                        {
+                            CodProd = reader["CODPROD"].ToString(),
+                            Nombre = reader["Nombre"].ToString(),
+                            Familia = reader["Familia"].ToString(),
+                            Precio = int.Parse(reader["Precio"].ToString())
+                        };
+                        lista.Add(producto);
+                    }
+                }
+                conn.CerrarConexion();
+            }               
+
             return lista;
         }
     }

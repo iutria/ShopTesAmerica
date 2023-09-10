@@ -1,0 +1,166 @@
+﻿@{
+    ViewBag.Title = "Venta";
+}
+
+<script>
+    $(document).ready(() =>{
+        seleccionarIcono('icon-tienda');
+        cargarVendedores();
+    });
+</script>
+
+<div class="contenedor-nav">
+    @{Html.RenderAction("Appbar", "Home");}
+    <div class="contenedor">
+        <h1 style="text-align: start">@ViewBag.Title</h1>
+        <hr />
+
+        <div class="row gap-2 p-2" style="width: calc(100vw - 100px)">
+            <div class="col card p-2">
+                <div class="row mb-1">
+                    <div class="col">
+                        <label for="documento" class="form-label">Documento</label>
+                        <input type="number" class="form-control" id="documento" placeholder="Número de documento">
+                    </div>
+                    <div class="col">
+                        <label for="nombre" class="form-label">Nombre</label>
+                        <input type="text" class="form-control" id="nombre" placeholder="Nombre">
+                    </div>
+                </div>
+                <div class="row mb-1">
+                    <div class="col">
+                        <label for="direccion" class="form-label">Dirección</label>
+                        <input type="text" class="form-control" id="direccion" placeholder="Dirección">
+                    </div>
+                    <div class="col">
+                        <label for="fecha-creacion" class="form-label">Fecha de creación</label>
+                        <input type="date" readonly class="form-control" id="fecha-creacion">
+                    </div>
+                </div>
+                <div class="row mb-1">
+                    <div class="col">
+                        <label for="cupo" class="form-label">Cupo</label>
+                        <input type="number" class="form-control" id="cupo" placeholder="Cupo">
+                    </div>
+                    <div class="col">
+                        <label for="canal" class="form-label">Canal</label>
+                        <input type="text" class="form-control" id="canal" placeholder="Canal">
+                    </div>
+                </div>
+                <div class="row mb-1">
+                    <div class="col">
+                        <label for="vendedor" class="form-label">Vendedor</label>
+                        <input type="text" class="form-control" id="vendedor" placeholder="Vendedor" list="vendedores">
+                        <datalist id="vendedores"></datalist>
+                    </div>
+                    <div class="col">
+                        <label for="padre" class="form-label">Padre</label>
+                        <input type="text" class="form-control" id="padre" placeholder="Padre">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <label for="departamento" class="form-label">Departamento</label>
+                        <input type="text" class="form-control" id="departamento" placeholder="Departamento">
+                    </div>
+                    <div class="col">
+                        <label for="ciudad" class="form-label">Ciudad</label>
+                        <input type="text" class="form-control" id="ciudad" placeholder="Ciudad">
+                    </div>
+                </div>
+                
+            </div>
+            <div class="col card p-2">
+                <div class="d-flex justify-content-between">
+                    <h2>Productos</h2>
+                    <button title="Agregar producto a la lista" class="btn btn-primary">
+                        <i class="bi bi-plus"></i>
+                    </button>
+                </div>
+                <hr />
+                <div style="height:180px; overflow-y: scroll;">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Nombre</th>
+                                <th scope="col">Cantidad</th>
+                                <th scope="col">Precio</th>
+                                <th scope="col"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th scope="row">pc</th>
+                                <td>5</td>
+                                <td>$5000</td>
+                                <td class="text-end">
+                                    <button class="btn btn-danger">
+                                        <i class="bi bi-x"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <hr />
+                <div class="d-flex justify-content-between">
+                    <h3>Total</h3>
+                    <h3>$<span>3000</span></h3>
+                </div>
+                <button class="btn btn-success">
+                    Guardar
+                </button>
+
+            </div>
+        </div>
+        <hr />
+        <div class="row">
+            <h2 class="col">Usuarios</h2>
+            <div class="input-group col">
+                <input type="text" class="form-control" placeholder="Documento" aria-describedby="basic-addon1">
+                <button class="input-group-text bg-success text-light" id="basic-addon1">
+                    <i class="bi bi-search"></i>
+                </button>
+            </div>
+        </div>
+        <hr />
+
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Documento</th>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Fecha pedido</th>
+                    <th scope="col" class="text-center">Ver</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th scope="row">1</th>
+                    <td>Mark</td>
+                    <td>Otto</td>
+                    <td>mo</td>
+                    <td class="text-center">
+                        <button class="btn btn-primary">
+                            <i class="bi bi-eye-fill"></i>
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    const cargarVendedores = async () => {
+        const vendedores = await obtenerVendedores();
+        $('#vendedores').text('');
+        vendedores.forEach((item, index) => {
+            $('#vendedores').append(`
+                <option value="${item.CodVend.trim()} ${item.Nombre.trim()}">
+            `);
+        });
+    }
+</script>

@@ -7,6 +7,7 @@ using System.Data;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Collections.ObjectModel;
 
 namespace ShopTesAmerica.Controllers
 {
@@ -22,6 +23,22 @@ namespace ShopTesAmerica.Controllers
         public ActionResult Index()
         {
             return View();
+        }
+        
+        [HttpPost]
+        public ActionResult Incrementar()
+        {
+            try
+            {
+                repository.IncrementarPrecios();
+                var resp = new { error = false };
+                return Json(resp, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception e)
+            {
+                var resp = new { error = true, text = e.ToString() };
+                return Json(resp, JsonRequestBehavior.AllowGet);
+            }
         }
 
         public ActionResult GetProductos()

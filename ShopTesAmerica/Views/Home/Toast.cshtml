@@ -1,0 +1,14 @@
+﻿<div class="toast" style="position: absolute; bottom: 10px; right: 10px; z-index: 1000" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="d-flex">
+        <div class="toast-body" id="text-toast"></div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+</div>
+
+<script>
+    const mostrarToast = (mensaje, tipo) => {
+        $('#text-toast').text(mensaje);
+        $('.toast').addClass(`align-items-center border-0 text-bg-${tipo}`);
+        $('.toast').toast('show');
+    }
+</script>

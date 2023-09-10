@@ -16,5 +16,9 @@ namespace ShopTesAmerica.Controllers
         {
             return PartialView();
         }
+        public ActionResult Toast()
+        {
+            return PartialView();
+        }
     }
 }

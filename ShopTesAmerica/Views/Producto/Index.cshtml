@@ -3,28 +3,15 @@
     ViewBag.Title = "Productos";
 }
 
-<style>
-    .boton-flotante {
-        position: absolute;
-        bottom: 20px;
-        right: 20px;
-        width: 60px;
-        height: 60px;
-        color: white;
-        background: black;
-    }
-
-    .boton-flotante:hover {
-        background: #1E1E1E;
-        color: white;
-    }
-</style>
-
 <div class="contenedor-nav">
     @{Html.RenderAction("Appbar", "Home");}
     <div class="contenedor">
-        <button onclick="mostrarModalAgregar()" class="btn boton-flotante"><i class="bi bi-plus"></i></button>
-        <h1 style="text-align: start">@ViewBag.Title</h1>
+        <button onclick="mostrarModalAgregar()" class="btn boton-flotante btn-dark"><i class="bi bi-plus"></i></button>
+        <div class="d-flex justify-content-between">
+            <h1 style="text-align: start">@ViewBag.Title</h1>
+            <button onclick="incrementarPrecio()" class="btn btn-primary">Incrementar el valor</button>
+        </div>
+        <hr />
         <table class="table">
             <thead>
                 <tr>
@@ -96,7 +83,7 @@
         $('#Modal_Agregar_Producto').modal('show');
     }
 
-    const mostrarModalEditar = (CodProd,Nombre, Precio,Familia) => {
+    const mostrarModalEditar = (CodProd, Nombre, Precio, Familia) => {
         $('#CodProd').val(CodProd.trim());
         $('#CodProd').prop("readonly", true);
         $('#Nombre').val(Nombre);
@@ -105,6 +92,26 @@
 
         $('#btn-accion').text('Editar');
         $('#Modal_Agregar_Producto').modal('show');
+    }
+
+    const incrementarPrecio = () => {
+        $.ajax({
+            url: '/Producto/Incrementar',
+            type: 'POST',
+            success: function (data) {
+                console.log(data)
+                if (data.error) {
+                    mostrarToast('Ha ocurrido un error', 'danger');
+                    console.log(data.text);
+                    return;
+                }
+                obteneProductos();
+                mostrarToast(`Se ha incrementado correctamente`, 'success');
+            },
+            error: function (error) {
+                mostrarToast('Ha ocurrido un error', 'danger');
+            }
+        });
     }
 
     $('#formVendedor').submit(function (event) {
@@ -131,9 +138,9 @@
                     mostrarToast('Ha ocurrido un error', 'danger');
                     return;
                 }
-                obtenerVendedores();
+                obteneProductos();
                 $('#Modal_Agregar_Producto').modal('hide');
-                mostrarToast(`${accion == 'Agregar'?'Agregado':'Editado'} correctamente`, 'success');
+                mostrarToast(`${accion == 'Agregar' ? 'Agregado' : 'Editado'} correctamente`, 'success');
             },
             error: function (error) {
                 mostrarToast('Ha ocurrido un error', 'danger');
@@ -148,10 +155,11 @@
     }
 
     $(document).ready(function () {
-        obtenerVendedores();
+        seleccionarIcono('icon-producto');
+        obteneProductos();
     });
 
-    const obtenerVendedores = () => {
+    const obteneProductos = () => {
         $.get('/Producto/GetProductos', function (data) {
             console.log(data);
             $('#tabla-body').text('');
@@ -162,7 +170,7 @@
                         <td>${item.CodProd}</td>
                         <td>${item.Nombre}</td>
                         <td>${item.Familia}</td>
-                        <td>${item.Precio}</td>
+                        <td>${new Intl.NumberFormat('es-CO', {style: 'currency', currency: 'COP', minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(item.Precio)}</td>
                         <td>
                             <button onclick="mostrarModalEditar('${item.CodProd}','${item.Nombre}', '${item.Precio}','${item.Familia}')" class="btn btn-primary"><i class="bi bi-pencil-square"></i></button>
                         </td>
